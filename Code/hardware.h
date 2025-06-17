@@ -75,6 +75,7 @@ void Hardware::init() {
 void Hardware::readAllSensors() {
   // Read battery voltage
   int analogVal = analogRead(VOLT_READ_PIN);
+  if(analogVal < OFFSET_ANALOG_VALUE) analogVal = OFFSET_ANALOG_VALUE;
   currentBatteryVolt = (((analogVal - OFFSET_ANALOG_VALUE) * //hilangkan offset analog read value 
                         (ANALOG_READ_MAX_VOLT / ANALOG_READ_MAX_BIT))) *
                         VOLTAGE_SCALE;

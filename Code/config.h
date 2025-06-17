@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// Pin Definitions
+// Pin 
 #define VOLT_READ_PIN A0
 #define SERVO_PIN D8
 #define TRIG_FOOD_PIN D5
@@ -11,39 +11,41 @@
 #define SDA_PIN D2
 #define SCL_PIN D1
 
-// Timing Configuration
+// Timing 
 #define BOT_CHECK_INTERVAL 1000
 #define SENSOR_READ_INTERVAL 5000
 #define DISPLAY_UPDATE_INTERVAL 2000
 #define ALERT_CHECK_INTERVAL 30000
-#define DATA_LOG_INTERVAL 300000  // 5 minutes
+#define DATA_LOG_INTERVAL 300000  // 5 menit
 
-// Hardware Configuration
+// Hardware Config
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
-#define MAX_DISTANCE 200
+#define MIN_DISTANCE 2
+#define MAX_FOOD_DISTANCE 13.6
+#define MAX_WATER_DISTANCE 6.3
 #define SERVO_FEED_ANGLE 0
 #define SERVO_CLOSE_ANGLE 180
 
-// Power Management
+// Konstan power
 #define BATTERY_MIN_VOLT 9.0
 #define BATTERY_MAX_VOLT 12.3
 #define SLEEP_DURATION_SECONDS 300
 #define LOW_BATTERY_THRESHOLD 15
 #define CRITICAL_BATTERY_THRESHOLD 10
 
-// Alert Thresholds
+// Konstan read baterai
+#define VOLTAGE_SCALE 3.836538462  //Voltage Awal / Voltage setelah voltage divider 
+#define ANALOG_READ_MAX_BIT 1023
+#define ANALOG_READ_MAX_VOLT 3.3
+#define VOLTAGE_DIVIDER_VOLT 3.12  
+#define OFFSET_ANALOG_VALUE 17  //tes a0 dengan groung
+
+// Threshold
 #define FOOD_WARNING_THRESHOLD 30
 #define FOOD_CRITICAL_THRESHOLD 15
 #define WATER_WARNING_THRESHOLD 25
 #define WATER_CRITICAL_THRESHOLD 10
 #define ALERT_COOLDOWN_MINUTES 30
-
-// Calibration Constants
-#define VOLTAGE_SCALE 3.836538462 
-#define ANALOG_READ_MAX_BIT 1023
-#define ANALOG_READ_MAX_VOLT 3.3
-#define VOLTAGE_DIVIDER_VOLT 3.12  
-#define OFFSET_ANALOG_VALUE 17
 
 #endif

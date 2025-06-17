@@ -1,21 +1,15 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// Network Configuration
-#define WIFI_SSID "YOUR_WIFI_SSID"
-#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
-#define BOT_TOKEN "YOUR_BOT_TOKEN"
-#define CHAT_ID "YOUR_CHAT_ID"
-
 // Pin Definitions
 #define VOLT_READ_PIN A0
-#define SERVO_PIN D1
-#define TRIG_FOOD_PIN D2
-#define ECHO_FOOD_PIN D3
-#define TRIG_WATER_PIN D4
-#define ECHO_WATER_PIN D5
-#define SDA_PIN D6
-#define SCL_PIN D7
+#define SERVO_PIN D8
+#define TRIG_FOOD_PIN D5
+#define ECHO_FOOD_PIN D6
+#define TRIG_WATER_PIN D7
+#define ECHO_WATER_PIN D4
+#define SDA_PIN D2
+#define SCL_PIN D1
 
 // Timing Configuration
 #define BOT_CHECK_INTERVAL 1000
@@ -28,12 +22,12 @@
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define MAX_DISTANCE 200
-#define SERVO_FEED_ANGLE 90
-#define SERVO_CLOSE_ANGLE 0
+#define SERVO_FEED_ANGLE 0
+#define SERVO_CLOSE_ANGLE 180
 
 // Power Management
 #define BATTERY_MIN_VOLT 9.0
-#define BATTERY_MAX_VOLT 12.6
+#define BATTERY_MAX_VOLT 12.3
 #define SLEEP_DURATION_SECONDS 300
 #define LOW_BATTERY_THRESHOLD 15
 #define CRITICAL_BATTERY_THRESHOLD 10
@@ -46,11 +40,10 @@
 #define ALERT_COOLDOWN_MINUTES 30
 
 // Calibration Constants
-#define VOLTAGE_DIVIDER_VOLT 3.12
-#define REFERENCE_VOLT 12.0
-#define ANALOG_MAX_BIT 1023
-#define ANALOG_MAX_VOLT 3.3
-#define VOLTAGE_OFFSET 0.76
-#define CALIBRATION_FACTOR 1.0
+#define VOLTAGE_SCALE 3.836538462 
+#define ANALOG_READ_MAX_BIT 1023
+#define ANALOG_READ_MAX_VOLT 3.3
+#define VOLTAGE_DIVIDER_VOLT 3.12  
+#define OFFSET_ANALOG_VALUE 17
 
 #endif

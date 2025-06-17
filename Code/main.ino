@@ -4,7 +4,7 @@
 #include "timeManager.h"
 #include "alertManager.h"
 #include "dataLog.h"
-#include "telegramConnection.h"
+#include "telegramHandler.h"
 
 // Global variables
 unsigned long lastBotCheck = 0;
@@ -21,12 +21,12 @@ void setup() {
   TimeManager::init();
   AlertManager::init();
   DataLog::init();
-  TelegramConnection::init();
+  telegramHandler::init();
   
-  Serial.println("✅ All modules initialized successfully!");
+  Serial.println("All modules initialized successfully!");
   
   // Send startup notification
-  TelegramConnection::sendStartupNotification();
+  telegramHandler::sendStartupNotification();
 }
 
 void loop() {
@@ -46,7 +46,7 @@ void loop() {
   
   // Check Telegram messages (every 1 second)
   if (currentTime - lastBotCheck > BOT_CHECK_INTERVAL) {
-    TelegramConnection::checkMessages();
+    telegramHandler::checkMessages();
     lastBotCheck = currentTime;
   }
   

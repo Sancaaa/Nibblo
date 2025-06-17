@@ -6,17 +6,19 @@
 //pin
 const int voltReadPin = A0; 
 
+//debug
+#define SDA_PIN D2
+#define SCL_PIN D1 
 
 // other macro
 #define SCREEN_WIDTH 128 
 #define SCREEN_HEIGHT 64 
 
-#define faktorKalibrasi 1 // (Vmultimeter / Va0)
-#define volDividerVolt 3.12
-#define reffV 12
+#define skalaVoltage 3.836538462 // (Vawal / Vakhir)
 #define analogReadMaxBit 1023
-#define analogReadMaxVolt 3.3 
-#define offsetVolt 0.76 //tes a0 to gnd
+#define analogReadMaxVolt 3.3
+#define voltDividerVolt 3.12  
+#define offsetAV 17 //tes a0 to gnd
 
 //declare
 int analogVal = 0; 
@@ -25,6 +27,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 void setup() {
   Serial.begin(115200);
+  Wire.begin(SDA_PIN, SCL_PIN); 
 
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {  // Alamat I2C umum: 0x3C
     Serial.println(F("SSD1306 allocation failed"));
@@ -38,16 +41,19 @@ void setup() {
 
 void loop() {
   analogVal = analogRead(voltReadPin);
-  voltVal = ((analogVal * (analogReadMaxVolt / analogReadMaxBit)) * (reffV / volDividerVolt) - offsetVolt) * faktorKalibrasi;
+  voltVal = (((analogVal - offsetAV)* (analogReadMaxVolt / analogReadMaxBit))) * skalaVoltage  ;
   // Serial.println(voltVal);
-  if(voltval < 0) voltval = 0;
+  Serial.println(analogVal);
+  // if(voltVal < 0) voltVal = 0;
 
   display.clearDisplay();
   display.setCursor(0, 10);
   display.print("Voltage : ");
-  display.print(voltVal, 2);
-  display.print("V");
+  display.print(voltVal);
+  display.println("V");
+  display.print("analog read : ");
+  display.print(analogVal);
   display.display(); 
 
-  delay(300);
+  delay(300);
 }

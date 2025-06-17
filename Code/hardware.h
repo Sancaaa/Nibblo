@@ -10,11 +10,13 @@
 
 class Hardware {
 private:
+  //objek tiap hardware
   static Adafruit_SSD1306 display;
   static Servo feedServo;
   static NewPing sonarFood;
   static NewPing sonarWater;
   
+  //variabel hardware dan baterai
   static int currentFoodLevel;
   static int currentWaterLevel;
   static float currentBatteryVolt;
@@ -37,22 +39,23 @@ public:
   static void displayStatus();
 };
 
-// Hardware Implementation
+// inisiasi objek
 Adafruit_SSD1306 Hardware::display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 Servo Hardware::feedServo;
-NewPing Hardware::sonarFood(TRIG_FOOD_PIN, ECHO_FOOD_PIN, MAX_DISTANCE);
-NewPing Hardware::sonarWater(TRIG_WATER_PIN, ECHO_WATER_PIN, MAX_DISTANCE);
+NewPing Hardware::sonarFood(TRIG_FOOD_PIN, ECHO_FOOD_PIN, MAX_FOOD_DISTANCE);
+NewPing Hardware::sonarWater(TRIG_WATER_PIN, ECHO_WATER_PIN, MAX_DISTANCE_WATER);
 
+//inisiasi variabel
 int Hardware::currentFoodLevel = 0;
 int Hardware::currentWaterLevel = 0;
 float Hardware::currentBatteryVolt = 0.0;
 float Hardware::currentBatteryPercent = 0.0;
 
 void Hardware::init() {
-  // Initialize I2C
+  // inisiasi I2C
   Wire.begin(SDA_PIN, SCL_PIN);
   
-  // Initialize display
+  // inisiasi oled
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     Serial.println("SSD1306 allocation failed");
     for (;;);
@@ -63,7 +66,7 @@ void Hardware::init() {
   displayMessage("Initializing...");
   
   // Initialize servo
-  feedServo.attach(SERVO_PIN);
+  feedServo.attach(SERVO_PIN, 500, 2400);
   feedServo.write(SERVO_CLOSE_ANGLE);
   
   Serial.println("✅ Hardware initialized");
@@ -72,9 +75,9 @@ void Hardware::init() {
 void Hardware::readAllSensors() {
   // Read battery voltage
   int analogVal = analogRead(VOLT_READ_PIN);
-  currentBatteryVolt = ((analogVal * (ANALOG_MAX_VOLT / ANALOG_MAX_BIT)) * 
-                       (REFERENCE_VOLT / VOLTAGE_DIVIDER_VOLT) - VOLTAGE_OFFSET) * 
-                       CALIBRATION_FACTOR;
+  currentBatteryVolt = (((analogVal - OFFSET_ANALOG_VALUE) * //hilangkan offset analog read value 
+                        (ANALOG_READ_MAX_VOLT / ANALOG_READ_MAX_BIT))) *
+                        VOLTAGE_SCALE;
   if (currentBatteryVolt < 0) currentBatteryVolt = 0;
   
   // Calculate battery percentage
@@ -85,19 +88,21 @@ void Hardware::readAllSensors() {
   
   // Read food level
   int foodDistance = sonarFood.ping_cm();
-  if (foodDistance == 0) foodDistance = MAX_DISTANCE;
-  currentFoodLevel = map(foodDistance, 20, 5, 0, 100);
+  if (foodDistance == 0) foodDistance = MAX_FOOD_DISTANCE;
+  currentFoodLevel = map(foodDistance, MAX_FOOD_DISTANCE, MIN_DISTANCE, 0, 100); 
   if (currentFoodLevel > 100) currentFoodLevel = 100;
   if (currentFoodLevel < 0) currentFoodLevel = 0;
+  //map merubah jarak jadi persen, map(val, fromLow, fromHigh, toLow, toHigh)
   
   // Read water level
   int waterDistance = sonarWater.ping_cm();
-  if (waterDistance == 0) waterDistance = MAX_DISTANCE;
-  currentWaterLevel = map(waterDistance, 15, 3, 0, 100);
+  if (waterDistance == 0) waterDistance = MAX_WATER_DISTANCE;
+  currentWaterLevel = map(waterDistance, MAX_WATER_DISTANCE, MIN_DISTANCE, 0, 100);
   if (currentWaterLevel > 100) currentWaterLevel = 100;
   if (currentWaterLevel < 0) currentWaterLevel = 0;
 }
 
+  // Feed
 void Hardware::feedHamster() {
   Serial.println("Feeding hamster...");
   feedServo.write(SERVO_FEED_ANGLE);
@@ -106,6 +111,7 @@ void Hardware::feedHamster() {
   delay(500);
 }
 
+  //print message ke display oled
 void Hardware::displayMessage(String message) {
   display.clearDisplay();
   display.setCursor(0, 10);
@@ -113,11 +119,12 @@ void Hardware::displayMessage(String message) {
   display.display();
 }
 
+  //update semua status hardware 
 void Hardware::updateDisplay() {
   display.clearDisplay();
   display.setCursor(0, 0);
   display.print("Bat: ");
-  display.print(currentBatteryVolt, 1);
+  display.print(currentBatteryVolt, 2);
   display.print("V (");
   display.print(currentBatteryPercent, 0);
   display.println("%)");
@@ -134,7 +141,7 @@ void Hardware::updateDisplay() {
   
   display.setCursor(0, 48);
   display.print("WiFi: ");
-  display.print(WiFi.status() == WL_CONNECTED ? "OK" : "ERR");
+  display.print(WiFi.status() == WL_CONNECTED ? "OK" : "ERROR");
   
   display.display();
 }

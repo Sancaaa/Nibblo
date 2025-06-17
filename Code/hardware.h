@@ -33,6 +33,8 @@ public:
   static int getWaterLevel() { return currentWaterLevel; }
   static float getBatteryVolt() { return currentBatteryVolt; }
   static float getBatteryPercent() { return currentBatteryPercent; }
+  static bool isLowBattery() { return currentBatteryPercent < LOW_BATTERY_THRESHOLD; }
+  static bool isCriticalBattery() { return currentBatteryPercent < CRITICAL_BATTERY_THRESHOLD; }
   
   // Display functions
   static void displayMessage(String message);
@@ -43,7 +45,7 @@ public:
 Adafruit_SSD1306 Hardware::display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 Servo Hardware::feedServo;
 NewPing Hardware::sonarFood(TRIG_FOOD_PIN, ECHO_FOOD_PIN, MAX_FOOD_DISTANCE);
-NewPing Hardware::sonarWater(TRIG_WATER_PIN, ECHO_WATER_PIN, MAX_DISTANCE_WATER);
+NewPing Hardware::sonarWater(TRIG_WATER_PIN, ECHO_WATER_PIN, MAX_WATER_DISTANCE);
 
 //inisiasi variabel
 int Hardware::currentFoodLevel = 0;
@@ -84,23 +86,21 @@ void Hardware::readAllSensors() {
   // Calculate battery percentage
   currentBatteryPercent = ((currentBatteryVolt - BATTERY_MIN_VOLT) / 
                           (BATTERY_MAX_VOLT - BATTERY_MIN_VOLT)) * 100;
-  if (currentBatteryPercent > 100) currentBatteryPercent = 100;
-  if (currentBatteryPercent < 0) currentBatteryPercent = 0;
+  currentBatteryPercent = constrain(currentBatteryPercent, 0, 100);
+  //constraint ngebatasin di range 0-100
   
   // Read food level
   int foodDistance = sonarFood.ping_cm();
   if (foodDistance == 0) foodDistance = MAX_FOOD_DISTANCE;
   currentFoodLevel = map(foodDistance, MAX_FOOD_DISTANCE, MIN_DISTANCE, 0, 100); 
-  if (currentFoodLevel > 100) currentFoodLevel = 100;
-  if (currentFoodLevel < 0) currentFoodLevel = 0;
+  currentFoodLevel = constrain(currentFoodLevel, 0, 100);
   //map merubah jarak jadi persen, map(val, fromLow, fromHigh, toLow, toHigh)
   
   // Read water level
   int waterDistance = sonarWater.ping_cm();
   if (waterDistance == 0) waterDistance = MAX_WATER_DISTANCE;
   currentWaterLevel = map(waterDistance, MAX_WATER_DISTANCE, MIN_DISTANCE, 0, 100);
-  if (currentWaterLevel > 100) currentWaterLevel = 100;
-  if (currentWaterLevel < 0) currentWaterLevel = 0;
+  currentWaterLevel = constrain(currentWaterLevel, 0, 100);
 }
 
   // Feed
@@ -113,9 +113,9 @@ void Hardware::feedHamster() {
 }
 
   //print message ke display oled
-void Hardware::displayMessage(String message) {
+void Hardware::displayMessage(String int line = 10) { //debugging 10 line
   display.clearDisplay();
-  display.setCursor(0, 10);
+  display.setCursor(0, line);
   display.print(message);
   display.display();
 }

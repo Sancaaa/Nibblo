@@ -11,12 +11,16 @@
 #define SDA_PIN D2
 #define SCL_PIN D1
 
+// Schedule
+#define MAX_SCHEDULES 10
+
 // Timing 
+#define TIME_ZONE 8
 #define BOT_CHECK_INTERVAL 1000
 #define SENSOR_READ_INTERVAL 5000
 #define DISPLAY_UPDATE_INTERVAL 2000
 #define ALERT_CHECK_INTERVAL 30000
-#define DATA_LOG_INTERVAL 300000  // 5 menit
+#define DATA_LOG_INTERVAL 300000 
 
 // Hardware Config
 #define SCREEN_WIDTH 128
@@ -27,7 +31,7 @@
 #define SERVO_FEED_ANGLE 0
 #define SERVO_CLOSE_ANGLE 180
 
-// Konstan power
+// Konstan dan treshhole power
 #define BATTERY_MIN_VOLT 9.0
 #define BATTERY_MAX_VOLT 12.3
 #define SLEEP_DURATION_SECONDS 300
@@ -41,7 +45,7 @@
 #define VOLTAGE_DIVIDER_VOLT 3.12  
 #define OFFSET_ANALOG_VALUE 17  //tes a0 dengan groung
 
-// Threshold
+// Threshold hardware
 #define FOOD_WARNING_THRESHOLD 30
 #define FOOD_CRITICAL_THRESHOLD 15
 #define WATER_WARNING_THRESHOLD 25

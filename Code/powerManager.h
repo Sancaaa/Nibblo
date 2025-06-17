@@ -3,27 +3,28 @@
 
 #include <ESP8266WiFi.h>
 #include "config.h"
+#include "credential.h"
 
 class PowerManager {
 private:
-  static bool deepSleepEnabled;
   static unsigned long lastActivity;
   static unsigned long sleepTimeout;
   static bool lowPowerMode;
+  static bool idleMode;
 
 public:
   static void init();
   static void checkPowerStatus();
   static void updateActivity();
-  static void enterDeepSleep(unsigned long seconds);
   static void enterLowPowerMode();
   static void exitLowPowerMode();
+  static void enterIdleMode();
 };
 
-bool PowerManager::deepSleepEnabled = true;
-unsigned long PowerManager::lastActivity = 0;
-unsigned long PowerManager::sleepTimeout = 300000; // 5 minutes
 bool PowerManager::lowPowerMode = false;
+bool PowerManager::idleMode = false;
+unsigned long PowerManager::lastActivity = 0;
+unsigned long PowerManager::sleepTimeout = 300000; // 5 menit
 
 void PowerManager::init() {
   lastActivity = millis();
@@ -38,7 +39,7 @@ void PowerManager::checkPowerStatus() {
     Serial.println("⚠️ Critical battery - entering emergency sleep");
     TelegramHandler::sendBatteryAlert(batteryPercent, true);
     delay(2000);
-    enterDeepSleep(3600); // Sleep for 1 hour
+    enterIdleMode();
   }
   
   // Low battery - enter power saving mode
@@ -54,28 +55,22 @@ void PowerManager::checkPowerStatus() {
   }
   
   // Idle sleep check
-  if (deepSleepEnabled && (millis() - lastActivity > sleepTimeout)) {
+  if (millis() - lastActivity > sleepTimeout) {
     Serial.println("💤 Idle timeout - entering sleep mode");
-    enterDeepSleep(SLEEP_DURATION_SECONDS);
+    enterIdleMode();
   }
 }
 
 void PowerManager::updateActivity() {
   lastActivity = millis();
-}
 
-void PowerManager::enterDeepSleep(unsigned long seconds) {
-  // Save state to RTC memory
-  DataLogger::saveToRTC();
-  
-  // Cleanup
-  WiFi.disconnect();
-  WiFi.mode(WIFI_OFF);
-  Hardware::displayMessage("Sleeping...");
-  delay(1000);
-  
-  // Deep sleep
-  ESP.deepSleep(seconds * 1000000);
+    //matiin lalu nyalain wifi
+    if (idleMode) {
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    idleMode = false;
+    Serial.println("⚡ Waking up from idle mode...");
+  }
 }
 
 void PowerManager::enterLowPowerMode() {
@@ -89,4 +84,11 @@ void PowerManager::exitLowPowerMode() {
   WiFi.setSleepMode(WIFI_NONE_SLEEP);
 }
 
+void PowerManager::enterIdleMode() {
+  idleMode = true;
+  WiFi.disconnect();
+  WiFi.mode(WIFI_OFF);
+  Hardware::displayMessage("Idle mode");
+  Serial.println("🛑 WiFi OFF to save power");
+}
 #endif

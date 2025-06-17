@@ -8,6 +8,8 @@ struct AlertState {
   bool foodCritical = false;
   bool waterWarning = false;
   bool waterCritical = false;
+  bool batteryWarning = false;
+  bool batteryCritical = false;
   unsigned long lastAlertTime = 0;
 };
 
@@ -19,9 +21,10 @@ private:
 public:
   static void init();
   static void checkAlerts();
-  static void resetAlerts();
   static void checkFoodAlerts(int level);
   static void checkWaterAlerts(int level);
+  static void checkBatteryAlerts(float percent);
+
 };
 
 AlertState AlertManager::state;
@@ -41,6 +44,7 @@ void AlertManager::checkAlerts() {
   
   checkFoodAlerts(Hardware::getFoodLevel());
   checkWaterAlerts(Hardware::getWaterLevel());
+  checkBatteryAlerts(Hardware::getBatteryPercent());
 }
 
 void AlertManager::checkFoodAlerts(int level) {
@@ -76,5 +80,24 @@ void AlertManager::checkWaterAlerts(int level) {
     state.waterCritical = false;
   }
 }
+
+void AlertManager::checkBatteryAlerts(float percent) {
+  if (percent <= CRITICAL_BATTERY_THRESHOLD && !state.batteryCritical) {
+    TelegramHandler::sendBatteryAlert(percent, true);
+    state.batteryCritical = true;
+    state.batteryWarning = true; 
+    state.lastAlertTime = millis();
+  }
+  else if (percent <= LOW_BATTERY_THRESHOLD && !state.batteryWarning && !state.batteryCritical) {
+    TelegramHandler::sendBatteryAlert(percent, false);
+    state.batteryWarning = true;
+    state.lastAlertTime = millis();
+  }
+  else if (percent > LOW_BATTERY_THRESHOLD + 5) {
+    state.batteryWarning = false;
+    state.batteryCritical = false;
+  }
+}
+
 
 #endif

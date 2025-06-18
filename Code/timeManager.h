@@ -40,7 +40,7 @@ public:
 };
 
 WiFiUDP TimeManager::ntpUDP;
-NTPClient TimeManager::timeClient(ntpUDP, "pool.ntp.org", TIME_ZONE*ONE_HOUR_SECOND, 60000); 
+NTPClient TimeManager::timeClient(ntpUDP, NTP_SERVER, TIME_ZONE*ONE_HOUR_SECOND, 60000); 
 //konveri UTC ke WITA, sinkronisasi tiap 60 detik
 FeedSchedule TimeManager::schedules[MAX_SCHEDULES];
 int TimeManager::scheduleCount = 0;

@@ -44,7 +44,7 @@
 
 // Konstan read baterai
 #define VOLTAGE_SCALE 3.836538462  //Voltage Awal / Voltage setelah voltage divider 
-#define ANALOG_READ_MAX_BIT 1023
+#define ANALOG_READ_MAX_BIT 1023.0f
 #define ANALOG_READ_MAX_VOLT 3.3f
 #define VOLTAGE_DIVIDER_VOLT 3.12f 
 #define OFFSET_ANALOG_VALUE 17  //tes a0 dengan groung

@@ -2,6 +2,8 @@
 #define ALERT_MANAGER_H
 
 #include "config.h"
+#include "hardware.h"
+#include "telegramHandler.h"  
 
 struct AlertState {
   bool foodWarning = false;
@@ -24,7 +26,7 @@ public:
   static void checkFoodAlerts(int level);
   static void checkWaterAlerts(int level);
   static void checkBatteryAlerts(float percent);
-
+  static int checkLevelState(int level, int warning, int critical);
 };
 
 AlertState AlertManager::state;
@@ -48,47 +50,51 @@ void AlertManager::checkAlerts() {
 }
 
 void AlertManager::checkFoodAlerts(int level) {
-  if (level <= FOOD_CRITICAL_THRESHOLD && !state.foodCritical) {
+  int status = checkLevelState(level, FOOD_WARNING_THRESHOLD, FOOD_CRITICAL_THRESHOLD);
+
+  if (status == 2 && !state.foodCritical) {
     TelegramHandler::sendFoodAlert(level, true);
     state.foodCritical = true;
     state.lastAlertTime = millis();
   }
-  else if (level <= FOOD_WARNING_THRESHOLD && !state.foodWarning && !state.foodCritical) {
+  else if (status == 1 && !state.foodWarning && !state.foodCritical) {
     TelegramHandler::sendFoodAlert(level, false);
     state.foodWarning = true;
     state.lastAlertTime = millis();
   }
-  else if (level > FOOD_WARNING_THRESHOLD + 10) {
+  else if (status == 0 && level > FOOD_WARNING_THRESHOLD + 10) {
     state.foodWarning = false;
     state.foodCritical = false;
   }
 }
 
 void AlertManager::checkWaterAlerts(int level) {
-  if (level <= WATER_CRITICAL_THRESHOLD && !state.waterCritical) {
+  int status = checkLevelState(level, WATER_WARNING_THRESHOLD, WATER_CRITICAL_THRESHOLD);
+
+  if (status == 2 && !state.waterCritical) {
     TelegramHandler::sendWaterAlert(level, true);
     state.waterCritical = true;
     state.lastAlertTime = millis();
   }
-  else if (level <= WATER_WARNING_THRESHOLD && !state.waterWarning && !state.waterCritical) {
+  else if (status == 1 && !state.waterWarning && !state.waterCritical) {
     TelegramHandler::sendWaterAlert(level, false);
     state.waterWarning = true;
     state.lastAlertTime = millis();
   }
-  else if (level > WATER_WARNING_THRESHOLD + 10) {
+  else if (status == 0 && level > WATER_WARNING_THRESHOLD + 10) {
     state.waterWarning = false;
     state.waterCritical = false;
   }
 }
 
 void AlertManager::checkBatteryAlerts(float percent) {
-  if (percent <= CRITICAL_BATTERY_THRESHOLD && !state.batteryCritical) {
+  if (Hardware::isCriticalBattery() && !state.batteryCritical) {
     TelegramHandler::sendBatteryAlert(percent, true);
     state.batteryCritical = true;
     state.batteryWarning = true; 
     state.lastAlertTime = millis();
   }
-  else if (percent <= LOW_BATTERY_THRESHOLD && !state.batteryWarning && !state.batteryCritical) {
+  else if (Hardware::isLowBattery() && !state.batteryWarning && !state.batteryCritical) {
     TelegramHandler::sendBatteryAlert(percent, false);
     state.batteryWarning = true;
     state.lastAlertTime = millis();
@@ -99,5 +105,9 @@ void AlertManager::checkBatteryAlerts(float percent) {
   }
 }
 
-
+int AlertManager::checkLevelState(int level, int warning, int critical){
+  if (level <= critical) return 2;
+  if (level <= warning) return 1;
+  return 0;
+}
 #endif

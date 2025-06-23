@@ -5,7 +5,6 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Servo.h>
-#include <NewPing.h>
 #include "config.h"
 
 class Hardware {
@@ -13,8 +12,7 @@ private:
   //objek tiap hardware
   static Adafruit_SSD1306 display;
   static Servo feedServo;
-  static NewPing sonarFood;
-  static NewPing sonarWater;
+  static int getDistanceCM(int trigPin, int echoPin)
   
   //variabel hardware dan baterai
   static int currentFoodLevel;
@@ -44,8 +42,6 @@ public:
 // inisiasi objek
 Adafruit_SSD1306 Hardware::display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 Servo Hardware::feedServo;
-NewPing Hardware::sonarFood(TRIG_FOOD_PIN, ECHO_FOOD_PIN, MAX_FOOD_DISTANCE);
-NewPing Hardware::sonarWater(TRIG_WATER_PIN, ECHO_WATER_PIN, MAX_WATER_DISTANCE);
 
 //inisiasi variabel
 int Hardware::currentFoodLevel = 0;
@@ -67,11 +63,29 @@ void Hardware::init() {
   display.setTextColor(WHITE);
   displayMessage("Initializing...");
   
+  // Initialize sensors
+  pinMode(TRIG_FOOD_PIN, OUTPUT);
+  pinMode(ECHO_FOOD_PIN, INPUT);
+  pinMode(TRIG_WATER_PIN, OUTPUT);
+  pinMode(ECHO_WATER_PIN, INPUT);
+
   // Initialize servo
   feedServo.attach(SERVO_PIN, 500, 2400);
   feedServo.write(SERVO_CLOSE_ANGLE);
   
   Serial.println("✅ Hardware initialized");
+}
+
+int Hardware::getDistanceCM(int trigPin, int echoPin) {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  long duration = pulseIn(echoPin, HIGH, 30000); // timeout 30 ms (maks 5 meter)
+  int distance = duration * 0.0343 / 2;
+  return distance;
 }
 
 void Hardware::readAllSensors() {
@@ -90,15 +104,15 @@ void Hardware::readAllSensors() {
   //constraint ngebatasin di range 0-100
   
   // Read food level
-  int foodDistance = sonarFood.ping_cm();
-  if (foodDistance == 0) foodDistance = MAX_FOOD_DISTANCE;
+  int foodDistance = getDistanceCM(TRIG_FOOD_PIN, ECHO_FOOD_PIN);
+  if (foodDistance <= 0 || foodDistance > MAX_FOOD_DISTANCE) foodDistance = MAX_FOOD_DISTANCE;
   currentFoodLevel = map(foodDistance, MAX_FOOD_DISTANCE, MIN_DISTANCE, 0, 100); 
   currentFoodLevel = constrain(currentFoodLevel, 0, 100);
   //map merubah jarak jadi persen, map(val, fromLow, fromHigh, toLow, toHigh)
   
   // Read water level
-  int waterDistance = sonarWater.ping_cm();
-  if (waterDistance == 0) waterDistance = MAX_WATER_DISTANCE;
+  int waterDistance = getDistanceCM(TRIG_WATER_PIN, ECHO_WATER_PIN);
+  if (waterDistance <= 0 || waterDistance > MAX_WATER_DISTANCE) waterDistance = MAX_WATER_DISTANCE;
   currentWaterLevel = map(waterDistance, MAX_WATER_DISTANCE, MIN_DISTANCE, 0, 100);
   currentWaterLevel = constrain(currentWaterLevel, 0, 100);
 }

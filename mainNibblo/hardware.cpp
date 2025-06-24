@@ -1,43 +1,5 @@
-#ifndef HARDWARE_H
-#define HARDWARE_H
+#include "hardware.h"
 
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#include <Servo.h>
-#include "config.h"
-
-class Hardware {
-private:
-  //objek tiap hardware
-  static Adafruit_SSD1306 display;
-  static Servo feedServo;
-  static int getDistanceCM(int trigPin, int echoPin);
-  
-  //variabel hardware dan baterai
-  static int currentFoodLevel;
-  static int currentWaterLevel;
-  static float currentBatteryVolt;
-  static float currentBatteryPercent;
-
-public:
-  static void init();
-  static void readAllSensors();
-  static void updateDisplay();
-  static void feedHamster();
-  
-  // Getters
-  static int getFoodLevel() { return currentFoodLevel; }
-  static int getWaterLevel() { return currentWaterLevel; }
-  static float getBatteryVolt() { return currentBatteryVolt; }
-  static float getBatteryPercent() { return currentBatteryPercent; }
-  static bool isLowBattery() { return currentBatteryPercent < LOW_BATTERY_THRESHOLD; }
-  static bool isCriticalBattery() { return currentBatteryPercent < CRITICAL_BATTERY_THRESHOLD; }
-  
-  // Display functions
-  static void displayMessage(String message);
-  static void displayStatus();
-};
 
 // inisiasi objek
 Adafruit_SSD1306 Hardware::display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
@@ -49,6 +11,7 @@ int Hardware::currentWaterLevel = 0;
 float Hardware::currentBatteryVolt = 0.0;
 float Hardware::currentBatteryPercent = 0.0;
 
+//implementasi fungsi
 void Hardware::init() {
   // inisiasi I2C
   Wire.begin(SDA_PIN, SCL_PIN);
@@ -118,16 +81,25 @@ void Hardware::readAllSensors() {
 }
 
   // Feed
-void Hardware::feedHamster() {
+bool Hardware::feedHamster() {
+  if (currentFoodLevel < 10) {
+    Serial.println("Food too low!");
+    displayMessage("Food too low!");
+    return false;
+  }
+
   Serial.println("Feeding hamster...");
+  displayMessage("Feeding hamster...");
   feedServo.write(SERVO_FEED_ANGLE);
   delay(1000);
   feedServo.write(SERVO_CLOSE_ANGLE);
   delay(500);
+  return true;
 }
 
   //print message ke display oled
-void Hardware::displayMessage(String int line = 10) { //debugging 10 line
+void Hardware::displayMessage(String message) { 
+  int line = 10;  //debugging 10 line
   display.clearDisplay();
   display.setCursor(0, line);
   display.print(message);
@@ -161,4 +133,10 @@ void Hardware::updateDisplay() {
   display.display();
 }
 
-#endif
+  // getter
+  int Hardware::getFoodLevel() { return currentFoodLevel; }
+  int Hardware::getWaterLevel() { return currentWaterLevel; }
+  float Hardware::getBatteryVolt() { return currentBatteryVolt; }
+  float Hardware::getBatteryPercent() { return currentBatteryPercent; }
+  bool Hardware::isLowBattery() { return currentBatteryPercent < LOW_BATTERY_THRESHOLD; }
+  bool Hardware::isCriticalBattery() { return currentBatteryPercent < CRITICAL_BATTERY_THRESHOLD; }

@@ -2,8 +2,10 @@
 #define ALERT_MANAGER_H
 
 #include "config.h"
-#include "hardware.h"
-#include "telegramHandler.h"  
+#include "telegramHandler.h"
+
+class Hardware;
+class TelegramHandler;
 
 struct AlertState {
   bool foodWarning = false;

@@ -10,6 +10,10 @@
 #define ONE_HOUR_MILLIS 3600000
 #define ONE_HOUR_SECOND 3600
 
+class Hardware;
+class DataLogger;
+class TelegramHandler;
+
 struct FeedSchedule {
   String time;
   bool enabled;

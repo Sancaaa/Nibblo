@@ -23,7 +23,7 @@ private:
 
 public:
   static void init();
-  static void checkMessages();1
+  static void checkMessages();
   static void handleNewMessages(int numNewMessages);
   static void sendStartupNotification();
   static void sendFoodAlert(int level, bool critical);
@@ -163,7 +163,7 @@ void TelegramHandler::handleNewMessages(int numNewMessages) {
         DataLogger::logFeeding("MANUAL", TimeManager::getCurrentTime());
         bot.sendMessage(chat_id, "✅ Makanan telah diberikan!\n⏰ " + TimeManager::getCurrentTimeString(), "");
       } else {
-        bot.sendMessage(chat_id, "❌ Gagal memberikan makanan. Periksa hardware!", "");
+        bot.sendMessage(chat_id, "❌ Gagal memberikan makanan.", "");
       }
     }
     else if (text == "/jadwal") {

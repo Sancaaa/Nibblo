@@ -3,6 +3,8 @@
 
 #include "config.h"
 
+class Hardware;
+
 struct LogData {
   unsigned long timestamp;
   int foodLevel;

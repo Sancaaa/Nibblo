@@ -2,7 +2,7 @@
 #include <Servo.h>
 
 // Makro untuk konfigurasi
-#define SERVO_PIN D8
+#define SERVO_PIN 15 //D8
 #define SERVO_FEED_ANGLE 0
 #define SERVO_CLOSE_ANGLE 180
 

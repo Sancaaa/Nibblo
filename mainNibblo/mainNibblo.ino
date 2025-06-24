@@ -1,3 +1,4 @@
+#include <ESP8266WiFi.h> 
 #include "config.h"
 #include "hardware.h"
 #include "powerManager.h"

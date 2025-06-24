@@ -1,18 +1,18 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
+#include "config.h"
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Servo.h>
-#include "config.h"
 
 class Hardware {
 private:
   //objek tiap hardware
   static Adafruit_SSD1306 display;
   static Servo feedServo;
-  static int getDistanceCM(int trigPin, int echoPin)
+  static int getDistanceCM(int trigPin, int echoPin);
   
   //variabel hardware dan baterai
   static int currentFoodLevel;

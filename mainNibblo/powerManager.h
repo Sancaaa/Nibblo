@@ -5,6 +5,8 @@
 #include "config.h"
 #include "credential.h"
 
+class Hardware;
+
 class PowerManager {
 private:
   static unsigned long lastActivity;

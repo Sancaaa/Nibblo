@@ -56,7 +56,7 @@ int Hardware::getDistanceCM(int trigPin, int echoPin) {
 }
 
 void Hardware::readAllSensors() {
-  delay(5);
+  delay(50);
   readAnalogVoltage();
   readFoodSensor();
   readWaterSensor();

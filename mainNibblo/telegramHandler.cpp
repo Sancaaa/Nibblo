@@ -202,10 +202,10 @@ String TelegramHandler::formatStatusMessage() {
   
   // Time info
   status += "🕐 Time: " + TimeManager::getCurrentTimeString() + "\n";
-  status += "⚡ WiFi: " + String(WiFi.status() == WL_CONNECTED ? "Connected" : "❌ Disconnected") + "\n\n";
+  status += "⚡ WiFi: Connected" + "\n";
+  status += "🔋 Battery: " + String(Hardware::getBatteryVolt(), 1) + "V (" + String(Hardware::getBatteryPercent(), 0) + "%)\n\n";
   
-  // Hardware status
-  status += "🔋 Battery: " + String(Hardware::getBatteryVolt(), 1) + "V (" + String(Hardware::getBatteryPercent(), 0) + "%)\n";
+  
   status += "🍽 Food: " + String(Hardware::getFoodLevel()) + "%\n";
   status += "💧 Water: " + String(Hardware::getWaterLevel()) + "%\n\n";
   

@@ -23,7 +23,7 @@ private:
 
 public:
   static void init();
-  static void checkMessages();1
+  static void checkMessages();
   static void handleNewMessages(int numNewMessages);
   static void sendStartupNotification();
   static void sendFoodAlert(int level, bool critical);

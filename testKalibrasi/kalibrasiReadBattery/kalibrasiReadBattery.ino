@@ -15,10 +15,10 @@ const int voltReadPin = A0;
 #define SCREEN_WIDTH 128 
 #define SCREEN_HEIGHT 64 
 
-#define skalaVoltage 3.836538462 // (Vawal / Vakhir)
+#define skalaVoltage 3.955 // (Vawal / Vakhir)
 #define analogReadMaxBit 1023
 #define analogReadMaxVolt 3.3
-#define voltDividerVolt 3.12  
+#define voltDividerVolt 2  
 #define offsetAV 17 //tes a0 to gnd
 
 //declare

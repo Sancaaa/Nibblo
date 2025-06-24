@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <Arduino.h> 
+#include <ESP8266WiFi.h>
 
 // Pin 
 const int VOLT_READ_PIN = A0;
@@ -22,6 +22,7 @@ const int VOLT_READ_PIN = A0;
 #define NTP_UPDATE_INTERVAL 60000
 
 // Timing & Interval
+#define TIME_UPDATE_INTERVAL 60000
 #define BOT_CHECK_INTERVAL 5000
 #define SENSOR_READ_INTERVAL 5000
 #define DISPLAY_UPDATE_INTERVAL 2000
@@ -45,11 +46,11 @@ const int VOLT_READ_PIN = A0;
 #define CRITICAL_BATTERY_THRESHOLD 10
 
 // Konstan read baterai
-#define VOLTAGE_SCALE 3.836538462  //Voltage Awal / Voltage setelah voltage divider 
+#define VOLTAGE_SCALE 3.955  //Voltage Awal / Voltage setelah voltage divider 
 #define ANALOG_READ_MAX_BIT 1023.0
 #define ANALOG_READ_MAX_VOLT 3.3
-#define VOLTAGE_DIVIDER_VOLT 3.12 
-#define OFFSET_ANALOG_VALUE 17  //tes a0 dengan groung
+#define VOLTAGE_DIVIDER_VOLT 2
+#define OFFSET_ANALOG_VALUE 17  //tes a0 dengan ground
 
 // Threshold hardware
 #define FOOD_WARNING_THRESHOLD 30.0

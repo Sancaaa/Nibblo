@@ -36,6 +36,10 @@ void Hardware::init() {
   feedServo.attach(SERVO_PIN, 500, 2400);
   feedServo.write(SERVO_CLOSE_ANGLE);
   
+  //baca baterai awal
+  pinMode(VOLT_READ_PIN, INPUT);
+  readAnalogVoltage();
+  
   Serial.println("✅ Hardware initialized");
 }
 
@@ -52,8 +56,22 @@ int Hardware::getDistanceCM(int trigPin, int echoPin) {
 }
 
 void Hardware::readAllSensors() {
+  delay(5);
+  readAnalogVoltage();
+  readFoodSensor();
+  readWaterSensor();
+}
+
+void Hardware::readAnalogVoltage(){
   // Read battery voltage
+  // int analogVal = analogRead(VOLT_READ_PIN);
+
+  WiFi.mode(WIFI_OFF);
+  delay(100); // biar ADC stabil
   int analogVal = analogRead(VOLT_READ_PIN);
+  WiFi.mode(WIFI_STA); // atau WIFI_ON
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
   if(analogVal < OFFSET_ANALOG_VALUE) analogVal = OFFSET_ANALOG_VALUE;
   currentBatteryVolt = (((analogVal - OFFSET_ANALOG_VALUE) * //hilangkan offset analog read value 
                         (ANALOG_READ_MAX_VOLT / ANALOG_READ_MAX_BIT))) *
@@ -65,14 +83,18 @@ void Hardware::readAllSensors() {
                           (BATTERY_MAX_VOLT - BATTERY_MIN_VOLT)) * 100;
   currentBatteryPercent = constrain(currentBatteryPercent, 0, 100);
   //constraint ngebatasin di range 0-100
-  
+}
+
+void Hardware::readFoodSensor(){
   // Read food level
   int foodDistance = getDistanceCM(TRIG_FOOD_PIN, ECHO_FOOD_PIN);
   if (foodDistance <= 0 || foodDistance > MAX_FOOD_DISTANCE) foodDistance = MAX_FOOD_DISTANCE;
   currentFoodLevel = map(foodDistance, MAX_FOOD_DISTANCE, MIN_DISTANCE, 0, 100); 
   currentFoodLevel = constrain(currentFoodLevel, 0, 100);
   //map merubah jarak jadi persen, map(val, fromLow, fromHigh, toLow, toHigh)
-  
+}
+
+void Hardware::readWaterSensor(){
   // Read water level
   int waterDistance = getDistanceCM(TRIG_WATER_PIN, ECHO_WATER_PIN);
   if (waterDistance <= 0 || waterDistance > MAX_WATER_DISTANCE) waterDistance = MAX_WATER_DISTANCE;

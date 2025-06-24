@@ -13,12 +13,12 @@ void PowerManager::init() {
   Serial.println("✅ Power Manager initialized");
 }
 
-string PowerManager::checkPowerStatus() {
+void PowerManager::checkPowerStatus() {
   float batteryPercent = Hardware::getBatteryPercent();
   
   // Critical battery - emergency sleep
   if (batteryPercent < CRITICAL_BATTERY_THRESHOLD) {
-    return "⚠️ Critical battery - entering emergency sleep";
+    Serial.println("⚠️ Critical battery - entering emergency sleep");
     TelegramHandler::sendBatteryAlert(batteryPercent, true);
     delay(2000);
     enterIdleMode();
@@ -46,30 +46,30 @@ string PowerManager::checkPowerStatus() {
 void PowerManager::updateActivity() {
   lastActivity = millis();
 
-    //matiin lalu nyalain wifi
-    if (idleMode) {
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    idleMode = false;
-    Serial.println("⚡ Waking up from idle mode...");
-  }
+//     //matiin lalu nyalain wifi
+//     if (idleMode) {
+//     WiFi.mode(WIFI_STA);
+//     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+//     idleMode = false;
+//     Serial.println("⚡ Waking up from idle mode...");
+//   }
 }
 
 void PowerManager::enterLowPowerMode() {
   lowPowerMode = true;
   // Reduce WiFi power
-  WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
+  // WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
 }
 
 void PowerManager::exitLowPowerMode() {
   lowPowerMode = false;
-  WiFi.setSleepMode(WIFI_NONE_SLEEP);
+  // WiFi.setSleepMode(WIFI_NONE_SLEEP);
 }
 
 void PowerManager::enterIdleMode() {
   idleMode = true;
-  WiFi.disconnect();
-  WiFi.mode(WIFI_OFF);
-  Hardware::displayMessage("Idle mode");
-  Serial.println("🛑 WiFi OFF to save power");
+  // WiFi.disconnect();
+  // WiFi.mode(WIFI_OFF);
+  // Hardware::displayMessage("Idle mode");
+  // Serial.println("🛑 WiFi OFF to save power");
 }

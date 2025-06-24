@@ -1,11 +1,12 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#include "config.h"
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Servo.h>
+#include <ESP8266WiFi.h>  
+#include "config.h"
 
 class Hardware {
 private:

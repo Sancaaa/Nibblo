@@ -7,6 +7,7 @@
 #include <Adafruit_SSD1306.h>
 #include <Servo.h>  
 #include "config.h" 
+#include "credential.h" 
 
 class Hardware {
 private:
@@ -24,6 +25,9 @@ private:
 public:
   static void init();
   static void readAllSensors();
+  static void readAnalogVoltage();
+  static void readFoodSensor();
+  static void readWaterSensor();
   static void updateDisplay();
   static bool feedHamster();
   

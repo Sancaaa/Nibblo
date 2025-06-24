@@ -12,7 +12,7 @@ private:
   //objek tiap hardware
   static Adafruit_SSD1306 display;
   static Servo feedServo;
-  static int getDistanceCM(int trigPin, int echoPin)
+  static int getDistanceCM(int trigPin, int echoPin);
   
   //variabel hardware dan baterai
   static int currentFoodLevel;

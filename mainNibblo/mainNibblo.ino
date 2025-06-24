@@ -7,6 +7,7 @@
 #include "telegramHandler.h"
 
 // Global variables
+unsigned long lastTimeUpdate = 0;
 unsigned long lastBotCheck = 0;
 unsigned long lastSensorRead = 0;
 unsigned long lastDisplayUpdate = 0;
@@ -15,58 +16,47 @@ void setup() {
   Serial.begin(115200);
   Serial.println("🐹 Hamster Feeder System Starting...");
   
-  // Initialize modules in order
   Hardware::init();
   PowerManager::init();
   TimeManager::init();
   AlertManager::init();
-  DataLog::init();
-  telegramHandler::init();
+  DataLogger::init();
+  TelegramHandler::init();
   
-  Serial.println("All modules initialized successfully!");
-  
-  // Send startup notification
-  telegramHandler::sendStartupNotification();
+  Serial.println("✅ All modules initialized!");
+  TelegramHandler::sendStartupNotification();
 }
 
 void loop() {
   unsigned long currentTime = millis();
-  
-  // Update time (every minute)
-  if (currentTime - lastBotCheck > BOT_CHECK_INTERVAL) {
+
+  // 1. Update time (tiap menit)
+  if (currentTime - lastTimeUpdate > TIME_UPDATE_INTERVAL) {
     TimeManager::update();
+    lastTimeUpdate = currentTime;
+  }
+
+  // 2. Check Telegram messages (tiap 1 detik)
+  if (currentTime - lastBotCheck > BOT_CHECK_INTERVAL) {
+    TelegramHandler::checkMessages();
     lastBotCheck = currentTime;
   }
-  
-  // Read sensors (every 5 seconds)
+
+  // 3. Read sensors (tiap 5 detik)
   if (currentTime - lastSensorRead > SENSOR_READ_INTERVAL) {
     Hardware::readAllSensors();
     lastSensorRead = currentTime;
   }
-  
-  // Check Telegram messages (every 1 second)
-  if (currentTime - lastBotCheck > BOT_CHECK_INTERVAL) {
-    telegramHandler::checkMessages();
-    lastBotCheck = currentTime;
-  }
-  
-  // Update display (every 2 seconds)
+
+  // 4. Update display (tiap 2 detik)
   if (currentTime - lastDisplayUpdate > DISPLAY_UPDATE_INTERVAL) {
     Hardware::updateDisplay();
     lastDisplayUpdate = currentTime;
   }
-  
-  // Check alerts
+
+  // 5. Logic lainnya
   AlertManager::checkAlerts();
-  
-  // Check auto feeding schedule
   TimeManager::checkAutoFeedSchedule();
-  
-  // Check power management
   PowerManager::checkPowerStatus();
-  
-  // Log data periodically
-  DataLog::logPeriodicData();
-  
-  delay(100); // Small delay to prevent overwhelming
+  DataLogger::logPeriodicData();
 }

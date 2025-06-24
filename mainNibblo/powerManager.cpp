@@ -18,7 +18,7 @@ void PowerManager::checkPowerStatus() {
   
   // Critical battery - emergency sleep
   if (batteryPercent < CRITICAL_BATTERY_THRESHOLD) {
-    Serial.println("⚠️ Critical battery - entering emergency sleep");
+    return "⚠️ Critical battery - entering emergency sleep"
     TelegramHandler::sendBatteryAlert(batteryPercent, true);
     delay(2000);
     enterIdleMode();

@@ -10,8 +10,8 @@ class TelegramHandler;
 
 class PowerManager {
 private:
-  static unsigned long lastActivity;
   static unsigned long sleepTimeout;
+  static unsigned long lastActivity;
   static bool lowPowerMode;
   static bool idleMode;
 

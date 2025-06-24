@@ -5,13 +5,13 @@
 #define SCREEN_WIDTH 128 
 #define SCREEN_HEIGHT 64 
 
-#define SDA_PIN D2  
-#define SCL_PIN D1  
+#define SDA_PIN 4   //D2 
+#define SCL_PIN 5   //D1 
 
-#define TRIG_FOOD_PIN D5
-#define ECHO_FOOD_PIN D6
-#define TRIG_WATER_PIN D7
-#define ECHO_WATER_PIN D4
+#define TRIG_FOOD_PIN 14    //D5
+#define ECHO_FOOD_PIN 12    //D6
+#define TRIG_WATER_PIN 13   //D7
+#define ECHO_WATER_PIN 2    //D4
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 

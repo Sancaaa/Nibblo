@@ -233,7 +233,7 @@ String TelegramHandler::formatStatusMessage() {
 String TelegramHandler::formatSystemInfo() {
   String info = "ℹ SYSTEM INFORMATION\n\n";
   
-  // info += "💾 Free Heap: " + String(ESP.getFreeHeap()) + " bytes\n";
+  info += "💾 Free Memory: " + String(ESP.getFreeHeap()) + " bytes\n";
   // info += "⚡ Chip ID: " + String(ESP.getChipId()) + "\n";
   info += "🔄 Uptime: " + String(millis() / 1000 / 60) + " minutes\n";
   // info += "📶 RSSI: " + String(WiFi.RSSI()) + " dBm\n";

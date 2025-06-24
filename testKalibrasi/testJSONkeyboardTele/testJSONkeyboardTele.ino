@@ -4,8 +4,8 @@
 #include <ArduinoJson.h>
 
 // WiFi & Bot Credentials
-const char* ssid = "Teknologi Informasi";
-const char* password = "Unud2020";
+const char* ssid = "Aquabubuk";
+const char* password = "hidupaqua";
 const char* botToken = "7607051762:AAHjqbONCvdKkwCaIuJPk9IWoCJllwYOpME";
 const int botRequestDelay = 1000;
 char* chat_id = "1844227079";
@@ -100,7 +100,7 @@ void sendMenuKeyboard(String chat_id) {
   // Gunakan method built-in UniversalTelegramBot untuk keyboard
   String keyboardJson = "[[{\"text\":\"/status\"},{\"text\":\"/makan\"}],"
                        "[{\"text\":\"/info makan\"},{\"text\":\"/info minum\"}],"
-                       "[{\"text\":\"/setwaktu\"}]]";
+                       "[{\"text\":\"/hihi\"}]]";
   
   bot.sendMessageWithReplyKeyboard(chat_id, 
     "🐹 *HAMSTER FEEDER MENU*\nGunakan tombol di bawah ini:", 

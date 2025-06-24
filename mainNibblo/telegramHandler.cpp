@@ -156,38 +156,43 @@ void TelegramHandler::processTimeInput(String chat_id, String text) {
 }
 
 void TelegramHandler::sendMenuKeyboard(String chat_id) {
-  String keyboard = "[[{\"text\":\"📊 Status\"},{\"text\":\"🍽 Feed Now\"}],"
-                   "[{\"text\":\"🍽 Food Info\"},{\"text\":\"💧 Water Info\"}],"
-                   "[{\"text\":\"⏰ Schedule\"},{\"text\":\"⚙ System\"}]]";
+  // Format keyboard seperti contoh yang berhasil - TANPA wrapper "keyboard"
+  String keyboardJson = "[[{\"text\":\"📊 Status\"},{\"text\":\"🍽 Feed Now\"}],"
+                       "[{\"text\":\"🍽 Food Info\"},{\"text\":\"💧 Water Info\"}],"
+                       "[{\"text\":\"⏰ Schedule\"},{\"text\":\"⚙ System\"}]]";
   
-  sendMessageWithKeyboard(chat_id, 
-    "🐹 HAMSTER FEEDER CONTROL\n"
-    "Choose an option below:", 
-    keyboard);
+  bot.sendMessageWithReplyKeyboard(chat_id, 
+    "🐹 *HAMSTER FEEDER CONTROL*\nChoose an option below:", 
+    "Markdown", 
+    keyboardJson, 
+    true);
 }
 
 void TelegramHandler::sendTimeMenuKeyboard(String chat_id) {
-  String keyboard = "[[{\"text\":\"➕ Add Schedule\"}],"
-                   "[{\"text\":\"📋 View Schedule\"}],"
-                   "[{\"text\":\"🗑 Clear Schedule\"}],"
-                   "[{\"text\":\"🔙 Back\"}]]";
+  // Format keyboard seperti contoh yang berhasil
+  String keyboardJson = "[[{\"text\":\"➕ Add Schedule\"}],"
+                       "[{\"text\":\"📋 View Schedule\"}],"
+                       "[{\"text\":\"🗑 Clear Schedule\"}],"
+                       "[{\"text\":\"🔙 Back\"}]]";
   
-  sendMessageWithKeyboard(chat_id, 
-    "⏰ SCHEDULE MANAGEMENT\n"
-    "Current schedules: " + String(TimeManager::getScheduleList().length() > 50 ? "Multiple" : "None") + "\n"
-    "Choose an option:", 
-    keyboard);
+  bot.sendMessageWithReplyKeyboard(chat_id, 
+    "⏰ *SCHEDULE MANAGEMENT*\nChoose an option:", 
+    "Markdown", 
+    keyboardJson, 
+    true);
 }
 
 void TelegramHandler::sendSystemMenuKeyboard(String chat_id) {
-  String keyboard = "[[{\"text\":\"📝 Logs\"},{\"text\":\"ℹ System Info\"}],"
-                   "[{\"text\":\"🔄 Reboot\"}],"
-                   "[{\"text\":\"🔙 Back\"}]]";
+  // Format keyboard seperti contoh yang berhasil
+  String keyboardJson = "[[{\"text\":\"📝 Logs\"},{\"text\":\"ℹ System Info\"}],"
+                       "[{\"text\":\"🔄 Reboot\"}],"
+                       "[{\"text\":\"🔙 Back\"}]]";
   
-  sendMessageWithKeyboard(chat_id, 
-    "⚙ SYSTEM MANAGEMENT\n"
-    "Advanced system options:", 
-    keyboard);
+  bot.sendMessageWithReplyKeyboard(chat_id, 
+    "⚙ *SYSTEM MANAGEMENT*\nAdvanced system options:", 
+    "Markdown", 
+    keyboardJson, 
+    true);
 }
 
 String TelegramHandler::formatStatusMessage() {
@@ -228,12 +233,12 @@ String TelegramHandler::formatStatusMessage() {
 String TelegramHandler::formatSystemInfo() {
   String info = "ℹ SYSTEM INFORMATION\n\n";
   
-  info += "💾 Free Heap: " + String(ESP.getFreeHeap()) + " bytes\n";
-  info += "⚡ Chip ID: " + String(ESP.getChipId()) + "\n";
+  // info += "💾 Free Heap: " + String(ESP.getFreeHeap()) + " bytes\n";
+  // info += "⚡ Chip ID: " + String(ESP.getChipId()) + "\n";
   info += "🔄 Uptime: " + String(millis() / 1000 / 60) + " minutes\n";
-  info += "📶 RSSI: " + String(WiFi.RSSI()) + " dBm\n";
+  // info += "📶 RSSI: " + String(WiFi.RSSI()) + " dBm\n";
   info += "🌐 IP: " + WiFi.localIP().toString() + "\n";
-  info += "🔧 SDK: " + String(ESP.getSdkVersion()) + "\n";
+  // info += "🔧 SDK: " + String(ESP.getSdkVersion()) + "\n";
   
   return info;
 }
@@ -294,20 +299,35 @@ void TelegramHandler::sendSystemAlert(String message) {
 }
 
 void TelegramHandler::sendLogs(String logs) {
-  sendMessage(CHAT_ID, "📝 System Logs\n" + logs);
+  sendMessage(CHAT_ID, "📝 System Logs\n" + logs, "Markdown");
 }
 
 void TelegramHandler::sendDebugInfo(String info) {
   #ifdef DEBUG_MODE
-  sendMessage(CHAT_ID, "🔧 DEBUG: " + info);
+  sendMessage(CHAT_ID, "🔧 DEBUG: " + info, "Markdown");
   #endif
   Serial.println("🔧 " + info);
 }
 
 // Utility methods
 void TelegramHandler::sendMessage(String chat_id, String message, String parseMode) {
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("🔄 WiFi disconnected, attempting reconnect...");
+    WiFi.reconnect();
+    
+    // Wait with timeout
+    int attempts = 0;
+    while (WiFi.status() != WL_CONNECTED && attempts < 10) {
+      delay(500); // 0.5 detik per attempt
+      attempts++;
+      Serial.print(".");
+    }
+    Serial.println();
+  }
+
   if (WiFi.status() == WL_CONNECTED) {
     bot.sendMessage(chat_id, message, parseMode);
+    Serial.println("✅ Message sent successfully");
   } else {
     Serial.println("❌ WiFi not connected - message not sent");
   }
@@ -322,5 +342,5 @@ void TelegramHandler::sendMessageWithKeyboard(String chat_id, String message, St
 }
 
 bool TelegramHandler::isAuthorizedUser(String chat_id) {
-  return chat_id == CHAT_ID; // Simple authorization - can be expanded
+  return chat_id == CHAT_ID; // Simple authorization - can be expanded
 }

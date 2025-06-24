@@ -27,19 +27,19 @@ void PowerManager::checkPowerStatus() {
   // Low battery - enter power saving mode
   else if (batteryPercent < LOW_BATTERY_THRESHOLD && !lowPowerMode) {
     Serial.println("⚠️ Low battery - entering power saving mode");
-    enterLowPowerMode();
+    // enterLowPowerMode();
   }
   
   // Normal operation
   else if (batteryPercent > LOW_BATTERY_THRESHOLD + 5 && lowPowerMode) {
     Serial.println("✅ Battery recovered - exiting power saving mode");
-    exitLowPowerMode();
+    // exitLowPowerMode();
   }
   
   // Idle sleep check
   if (millis() - lastActivity > sleepTimeout) {
     Serial.println("💤 Idle timeout - entering sleep mode");
-    enterIdleMode();
+    // enterIdleMode();
   }
 }
 

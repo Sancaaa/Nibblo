@@ -8,8 +8,8 @@
 const int voltReadPin = A0; 
 
 //debug
-#define SDA_PIN D2
-#define SCL_PIN D1 
+#define SDA_PIN 4 //D2
+#define SCL_PIN 5 //D1 
 
 // other macro
 #define SCREEN_WIDTH 128 

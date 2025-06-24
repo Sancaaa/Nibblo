@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <Arduino.h> 
+
 // Pin 
 const int VOLT_READ_PIN = A0;
 #define SERVO_PIN 15    //D8

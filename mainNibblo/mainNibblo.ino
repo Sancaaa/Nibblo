@@ -1,10 +1,9 @@
-#include <ESP8266WiFi.h> 
 #include "config.h"
 #include "hardware.h"
 #include "powerManager.h"
 #include "timeManager.h"
 #include "alertManager.h"
-#include "dataLog.h"
+#include "dataLogger.h"
 #include "telegramHandler.h"
 
 // Global variables

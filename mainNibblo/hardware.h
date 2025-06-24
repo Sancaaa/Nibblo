@@ -1,7 +1,6 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#include <Arduino.h>
 #include <ESP8266WiFi.h> 
 #include <Wire.h>
 #include <Adafruit_GFX.h>

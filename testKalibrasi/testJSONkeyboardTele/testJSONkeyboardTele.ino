@@ -4,11 +4,11 @@
 #include <ArduinoJson.h>
 
 // WiFi & Bot Credentials
-const char* ssid = "Aquabubuk";
-const char* password = "hidupaqua";
-const char* botToken = "7607051762:AAHjqbONCvdKkwCaIuJPk9IWoCJllwYOpME";
+const char* ssid = "a";
+const char* password = "a";
+const char* botToken = "a";
 const int botRequestDelay = 1000;
-char* chat_id = "1844227079";
+char* chat_id = "a";
 
 WiFiClientSecure secured_client;
 UniversalTelegramBot bot(botToken, secured_client);
